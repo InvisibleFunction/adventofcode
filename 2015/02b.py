@@ -1,0 +1,40 @@
+from icecream import ic
+import sys
+import itertools
+
+filename = sys.argv[1]
+ic(filename)
+
+lines = []
+with open(filename) as file:
+    while (line := file.readline().rstrip()):
+        lines.append(line)
+ic(lines)
+
+def find_area( s ):
+    d = [int(x) for x in s.split("x")]
+    ic(d)
+    d2 = []
+    for c in itertools.combinations(d, 2):
+        ic(c)
+        d2.append(c[0] * c[1] )
+    ic(d2)
+    d2.sort()
+    
+    ans = (d2[0] * 3) + (d2[1] * 2) + (d2[2] * 2)
+    return ans
+
+def find_ribbon( s ):
+    d = [int(x) for x in s.split("x")]
+    ic(d)
+    d.sort()
+    r = (d[0] * 2) + (d[1] * 2)
+    b = d[0] * d[1] * d[2]
+    return r+b
+
+
+sum = 0
+for line in lines:
+    sum += find_ribbon(line)
+
+ic(sum)
