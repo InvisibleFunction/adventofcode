@@ -39,15 +39,21 @@ def is_limited(report):
     ic(min(report2))
     return (max(report2) <= 3) and (min(report2) >= 1)
 
+def check(dr):
+    return is_iord(dr) and is_limited(dr)
+
 is_ok = 0
 for report in reports:
-    dr = diff_report(report)
     ic(report)
-    ic(dr)
-    ic(is_iord(dr))
-    ic(is_limited(dr))
-    if is_iord(dr) and is_limited(dr):
-        is_ok += 1
+    thistime = False
+    for i in range(len(report)):
+        ic(i)
+        local = report.copy()
+        local.pop(i)
+        thistime = check(diff_report(local))
+        if thistime:
+            is_ok += 1
+            break
 
 ic(is_ok)
 
