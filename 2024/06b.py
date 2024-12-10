@@ -9,11 +9,12 @@ inFile = sys.argv[1]
 
 with open(inFile,'r') as f:
     lines = f.read().splitlines()
-
+ic.disable()
 ic(lines)
 
 visited = set()
 grid = defaultdict(int)
+obs = defaultdict(int)
 grid["maxx"] = len(lines[0])
 grid["maxy"] = len(lines)
 guard = {}
@@ -68,31 +69,56 @@ def draw_grid(grid, guard=None):
 
 draw_grid(grid, guard)
 
-def in_grid(grid, guard):
-    return guard["pos"][0] >= 0 and guard["pos"][0] < grid["maxx"] and guard["pos"][1] >= 0 and guard["pos"][1] < grid["maxy"]
+def in_grid(xgrid, xguard):
+    return xguard["pos"][0] >= 0 and xguard["pos"][0] < xgrid["maxx"] and xguard["pos"][1] >= 0 and xguard["pos"][1] < xgrid["maxy"]
 
-def whats_in_front(grid, guard):
-    next_pos = (guard["pos"][0] + dm[guard["d"]][0], guard["pos"][1] + dm[guard["d"]][1])
-    ic(next_pos)
-    return grid[next_pos]
+def whats_in_front(wgrid, wguard):
+    next_pos = (wguard["pos"][0] + dm[wguard["d"]][0], wguard["pos"][1] + dm[wguard["d"]][1])
+    #ic(next_pos)
+    return wgrid[next_pos]
 
-def move_guard(grid, gaurd):
-    in_front = whats_in_front(grid,guard)
+def move_guard(mgrid, mguard):
+    in_front = whats_in_front(mgrid,mguard)
     if in_front == 0:
-        guard["pos"] = ( guard["pos"][0] + dm[guard["d"]][0], guard["pos"][1] + dm[guard["d"]][1])
+        mguard["pos"] = ( mguard["pos"][0] + dm[mguard["d"]][0], mguard["pos"][1] + dm[mguard["d"]][1])
     elif in_front == 1:
-        guard["d"] = (guard["d"] + 1) % 4
+        mguard["d"] = (mguard["d"] + 1) % 4
     else:
         print("uh oh 3")
-        ic(guard)
-    return grid, guard
+        ic(mguard)
+    return mgrid, mguard
 
-while in_grid(grid, guard):
-    visited.add(guard["pos"])
-    grid, guard = move_guard(grid, guard)
+#while in_grid(grid, guard):
+#    visited.add(guard["pos"])
+#    grid, guard = move_guard(grid, guard)
 
+def is_loop(igrid, iguard):
+    visited = defaultdict(int)
+    ic(visited)
+    ic(iguard)
+    while in_grid(igrid, iguard):
+        if visited and max(visited.values()) > 10:
+            ic("t")
+            return True
+        visited[iguard["pos"]] += 1
+        igrid, iguard = move_guard(igrid, iguard)
+    ic("f")
+    ic(visited)
+    return False
+
+loopcount = 0
+for x2 in range(grid["maxx"]):
+    for y2 in range(grid["maxy"]):
+        ic(x2,y2)
+        lgr = grid.copy()
+        lgr[(x2,y2)] = 1
+        draw_grid(lgr)
+        lgu = guard.copy()
+        if is_loop(lgr,lgu):
+            ic("yes loop")
+            loopcount += 1
+
+        
 ic("end")
-ic(guard)
-ic(len(visited))
-
-                
+ic(loopcount)
+print(loopcount)
